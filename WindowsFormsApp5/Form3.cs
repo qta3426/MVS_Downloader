@@ -35,32 +35,9 @@ namespace WindowsFormsApp5
             }
             return DateTime.Now;
         }
-        private void button1_Click(object sender, EventArgs e)
-        {
-            inputID();
-            Delay(3000);
-            inputPW();
-            Delay(3000);
-            webView21.CoreWebView2.ExecuteScriptAsync("document.getElementById('idSIButton9').click()");
-            Delay(5000);
-            MessageBox.Show("로그인 성공!");
-            this.Close();            
-        }
-        private void inputID()
-        {
-            string id = "ko.dataFor(document.getElementById('i0116')).usernameTextbox.value('" + textBox1.Text + "');";
-            webView21.CoreWebView2.ExecuteScriptAsync(id);
-            webView21.CoreWebView2.ExecuteScriptAsync("document.getElementById('idSIButton9').click()");
-        }
-        private void inputPW()
-        {
-            string pwd = "ko.dataFor(document.getElementById('i0118')).passwordTextbox.value('" + textBox2.Text + "');";
-            webView21.CoreWebView2.ExecuteScriptAsync(pwd);
-            webView21.CoreWebView2.ExecuteScriptAsync("document.getElementById('idSIButton9').click()");
-        }
         private void Form3_Load(object sender, EventArgs e)
         {
-            
+
         }
     }
 }

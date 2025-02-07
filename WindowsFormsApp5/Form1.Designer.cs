@@ -33,7 +33,10 @@ namespace WindowsFormsApp5
             this.button2 = new System.Windows.Forms.Button();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.button5 = new System.Windows.Forms.Button();
+            this.webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
+            ((System.ComponentModel.ISupportInitialize)(this.webView21)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
@@ -62,7 +65,7 @@ namespace WindowsFormsApp5
             this.listBox1.ItemHeight = 12;
             this.listBox1.Location = new System.Drawing.Point(12, 52);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(601, 316);
+            this.listBox1.Size = new System.Drawing.Size(591, 52);
             this.listBox1.TabIndex = 2;
             // 
             // button3
@@ -75,15 +78,33 @@ namespace WindowsFormsApp5
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // button4
+            // textBox1
             // 
-            this.button4.Location = new System.Drawing.Point(619, 250);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(109, 39);
-            this.button4.TabIndex = 5;
-            this.button4.Text = "데이터 수정하기";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.textBox1.Location = new System.Drawing.Point(12, 12);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(532, 21);
+            this.textBox1.TabIndex = 6;
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(553, 12);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(60, 21);
+            this.button5.TabIndex = 7;
+            this.button5.Text = "검색";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
+            // webView21
+            // 
+            this.webView21.AllowExternalDrop = true;
+            this.webView21.CreationProperties = null;
+            this.webView21.DefaultBackgroundColor = System.Drawing.Color.White;
+            this.webView21.Location = new System.Drawing.Point(12, 110);
+            this.webView21.Name = "webView21";
+            this.webView21.Size = new System.Drawing.Size(591, 258);
+            this.webView21.TabIndex = 8;
+            this.webView21.ZoomFactor = 1D;
             // 
             // Form1
             // 
@@ -91,7 +112,9 @@ namespace WindowsFormsApp5
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(735, 380);
-            this.Controls.Add(this.button4);
+            this.Controls.Add(this.webView21);
+            this.Controls.Add(this.button5);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.listBox1);
             this.Controls.Add(this.button2);
@@ -101,17 +124,20 @@ namespace WindowsFormsApp5
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "메인";
             this.Load += new System.EventHandler(this.Form1_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.webView21)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
-
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button button5;
+        private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
     }
 }
 

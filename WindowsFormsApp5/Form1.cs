@@ -4,13 +4,21 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Net;
+using System.Net.Http;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.IO.MemoryMappedFiles;
+using System.Drawing.Text;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.Web.WebView2.Core;
+using Microsoft.Web.WebView2.WinForms;
+using System.Text;
+using Microsoft.Web.WebView2.Wpf;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace WindowsFormsApp5
 {
@@ -20,8 +28,8 @@ namespace WindowsFormsApp5
         string ppath;
         IniFile ini = new IniFile();
         public Form1()
-        {            
-            InitializeComponent();    
+        {
+            InitializeComponent();
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -60,17 +68,6 @@ namespace WindowsFormsApp5
                 }
                 ini.Load(Application.StartupPath + "\\mvs.ini");
                 ppath = ini["MVSSetting"]["Path"].ToString();
-
-                WebClient client = new WebClient();
-                Stream stream = client.OpenRead("https://docs.google.com/spreadsheets/d/e/2PACX-1vStb17vwMPReuTx6lmvdkDuNZGyi2sIHfhNQxEgW5_t738VzCLXQArOXeks7-bqRQS8NTvACVAoOw-L/pub?output=csv");
-                StreamReader reader = new StreamReader(stream);
-
-                while (!reader.EndOfStream)
-                {
-                    string line = reader.ReadLine();
-                    string[] fields = line.Split(',');
-                    listBox1.Items.Add(fields[2]);
-                }
             }
             this.FormClosed += Form1_Closing;
         }
@@ -85,7 +82,7 @@ namespace WindowsFormsApp5
             }
             catch (NullReferenceException)
             {
-                MessageBox.Show("파일을 선택해주세요.","오류",MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("파일을 선택해주세요.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void button3_Click(object sender, EventArgs e)
@@ -103,13 +100,64 @@ namespace WindowsFormsApp5
         }
         public void Form1_Closing(object sender, FormClosedEventArgs e)
         {
-            File.Delete(Application.StartupPath + @"\WindowsFormsApp5.exe.WebView2\\EBWebView\\Default\\Network\\cookies");
+            //File.Delete(Application.StartupPath + @"\WindowsFormsApp5.exe.WebView2\\EBWebView\\Default\\Network\\cookies");
+        }
+        private async void button5_Click(object sender, EventArgs e)
+        {
+            await webView21.EnsureCoreWebView2Async();
+
+            string queryText = textBox1.Text;
+
+            string script = $@"
+(async function() {{
+    try {{
+        const response = await fetch('https://my.visualstudio.com/_apis/AzureSearch/Search?upn=', {{
+            method: 'POST',
+            headers: {{
+                'Accept': 'application/json;api-version=1.0',
+                'User-Agent': 'ELinks (textmode)',
+                'Content-Type': 'application/json',
+                'Host': 'my.visualstudio.com'
+            }},
+            mode: 'cors'
+            body: JSON.stringify({{
+                getAllResults:true,
+                searchText:{queryText},
+                subscriptionLevel:''
+        }});
+        const data = await response.json();
+        document.body.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+    }} catch (error) {{
+        document.body.innerHTML = '<p>오류 발생: ' + error.message + '</p>';
+    }}
+}})();";
+
+         string jsonResult = await webView21.CoreWebView2.ExecuteScriptAsync(script);
         }
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            Form5 outForm= new Form5();
-            outForm.Show();
-        }
+
+
+        // 자바스크립트 실행 후 결과 수신
+        //string jsonResult = await webView21.CoreWebView2.ExecuteScriptAsync(script);
+        //jsonResult = jsonResult.Trim('"').Replace("\\\"", "\"");
+
+        //if (!string.IsNullOrEmpty(jsonResult))
+        //{
+        //    try
+        //    {
+        //        // System.Text.Json으로 파싱
+        //        var resultData = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonResult);
+
+        //        listBox1.Items.Clear();
+        //        foreach (var item in resultData)
+        //        {
+        //            listBox1.Items.Add($"{item.Key}: {item.Value}");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"결과 처리 오류: {ex.Message}");
+        //    }
+        //}
     }
 }
