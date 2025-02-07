@@ -24,6 +24,10 @@ namespace WindowsFormsApp5
 {
     public partial class Form1 : Form
     {
+        public Dictionary<int, ProductFiles> productFiles;  // productFiles를 클래스 필드로 선언
+        private List<FileDetailModel> productFileDetails = new List<FileDetailModel>();
+        private CookieContainer _cookieContainer = new CookieContainer();
+        private HttpClient _httpClient;
         private SearchResult searchResult;
         string path;
         string ppath;
@@ -86,94 +90,47 @@ namespace WindowsFormsApp5
         //        MessageBox.Show("파일을 선택해주세요.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
         //    }
         //}
-        //private void button3_Click(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        string filename = listBox1.SelectedItem.ToString();
-        //        Form4 outForm = new Form4(filename);
-        //        outForm.Show();
-        //    }
-        //    catch (NullReferenceException)
-        //    {
-        //        MessageBox.Show("파일을 선택해주세요.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
-        //}
+        private void button3_Click(object sender, EventArgs e)
+        {
+        }
         public void Form1_Closing(object sender, FormClosedEventArgs e)
         {
             //File.Delete(Application.StartupPath + @"\WindowsFormsApp5.exe.WebView2\\EBWebView\\Default\\Network\\cookies");
         }
         private async void button5_Click(object sender, EventArgs e)
         {
-            string url = "https://my.visualstudio.com";  // 쿠키를 가져올 URL
-            Uri uri = null;
+            await InitializeWebViewAndExtractCookiesAsync();
+            await SearchProductsAsync(textBox1.Text);
+        }
 
+        private async Task InitializeWebViewAndExtractCookiesAsync()
+        {
             try
             {
-                // WebView2 초기화가 완료될 때까지 대기
+                string url = "https://my.visualstudio.com";
                 await webView21.EnsureCoreWebView2Async();
 
-                uri = new Uri(url); // string을 Uri 객체로 변환
-                string urlString = uri.ToString(); // Uri를 string으로 변환
-
-                // WebView2가 초기화되었으므로 쿠키 가져오기
                 if (webView21.CoreWebView2 != null)
                 {
-                    // Uri 대신 string으로 쿠키를 가져오기
-                    var cookies = await webView21.CoreWebView2.CookieManager.GetCookiesAsync(urlString);
+                    var cookies = await webView21.CoreWebView2.CookieManager.GetCookiesAsync(url);
 
-                    // 쿠키를 HttpClient용으로 변환
-                    var cookieContainer = new CookieContainer();
+                    Uri uri = new Uri(url);
+                    _cookieContainer = new CookieContainer();
                     foreach (var cookie in cookies)
                     {
-                        cookieContainer.Add(uri, new Cookie(cookie.Name, cookie.Value));
+                        _cookieContainer.Add(uri, new Cookie(cookie.Name, cookie.Value));
                     }
 
-                    // HttpClientHandler에 쿠키를 설정
-                    var handler = new HttpClientHandler();
-                    handler.CookieContainer = cookieContainer;
-
-                    var client = new HttpClient(handler);
-
-                    client.DefaultRequestHeaders.Add("Accept", "application/json;api-version=1.0");
-                    client.DefaultRequestHeaders.Add("Host", "my.visualstudio.com");
-                    client.DefaultRequestHeaders.Add("User-Agent","ELinks (textmode)");
-
-                    string apiUrl = "https://my.visualstudio.com/_apis/AzureSearch/Search?upn=";
-                    string body = $"{{ \"getAllResults\": true, \"searchText\": \"{textBox1.Text}\", \"subscriptionLevel\": \"\" }}";
-
-                    var content = new StringContent(body, Encoding.UTF8, "application/json");
-
-                    // POST 요청 보내기
-                    var response = await client.PostAsync(apiUrl, content);
-
-                    if (response.IsSuccessStatusCode)
+                    var handler = new HttpClientHandler { CookieContainer = _cookieContainer };
+                    _httpClient = new HttpClient(handler)
                     {
-                        string responseData = await response.Content.ReadAsStringAsync();
-                        // JSON 파싱
-                        var searchResult = JsonSerializer.Deserialize<SearchResult>(responseData);
-
-                        // ListBox에 기존 항목 지우기
-                        listView1.Items.Clear();
-                        listView1.Columns.Clear();
-                        listView1.Columns.Add("Product ID", 80);
-                        listView1.Columns.Add("Product Name", 500);
-                        listView1.FullRowSelect = true;
-                        listView1.View = View.Details;
-
-                        // searchResultsGroupByProduct 데이터를 ListBox에 추가
-                        foreach (var product in searchResult.searchResultsGroupByProduct)
-                        {
-                            var item = new ListViewItem(product.productId.ToString());  // 첫 번째 열: ProductId
-                            item.SubItems.Add(product.productName);  // 두 번째 열: ProductName
-
-                            listView1.Items.Add(item);
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show($"요청 실패: {response.StatusCode}");
-                    }
+                        DefaultRequestHeaders =
+                {
+                    { "Accept", "application/json;api-version=1.0" },
+                    { "Host", "my.visualstudio.com" },
+                    { "User-Agent", "ELinks (textmode)" }
+                }
+                    };
                 }
                 else
                 {
@@ -182,65 +139,107 @@ namespace WindowsFormsApp5
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"오류 발생: {ex.Message}");
+                MessageBox.Show($"쿠키 초기화 중 오류 발생: {ex.Message}");
             }
         }
 
-        private async void listView1_SelectedIndexChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        private async Task SearchProductsAsync(string searchText)
         {
-            // 선택된 항목이 있을 때만 작업 수행
-            if (e.IsSelected)
+            try
             {
-                // 선택된 항목의 첫 번째 열(ProductId)을 가져옴
-                int productId = int.Parse(e.Item.Text); // 첫 번째 열에 ProductId가 있음
+                string apiUrl = "https://my.visualstudio.com/_apis/AzureSearch/Search?upn=";
+                string body = $"{{ \"getAllResults\": true, \"searchText\": \"{searchText}\", \"subscriptionLevel\": \"\" }}";
 
-                // API 호출을 통해 해당 productId에 대한 파일 정보 가져오기
-                await GetFilesForProductId(productId);
+                var content = new StringContent(body, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(apiUrl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseData = await response.Content.ReadAsStringAsync();
+                    searchResult = JsonSerializer.Deserialize<SearchResult>(responseData);
+
+                    listView1.Items.Clear();
+                    listView1.Columns.Clear();
+                    listView1.Columns.Add("Product ID", 80);
+                    listView1.Columns.Add("Product Name", 500);
+                    listView1.FullRowSelect = true;
+                    listView1.View = View.Details;
+
+                    foreach (var product in searchResult.searchResultsGroupByProduct)
+                    {
+                        var item = new ListViewItem(product.productId.ToString());
+                        item.SubItems.Add(product.productName);
+                        listView1.Items.Add(item);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"요청 실패: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"제품 검색 중 오류 발생: {ex.Message}");
             }
         }
 
         private async Task GetFilesForProductId(int productId)
         {
-            string apiUrl = $"https://my.visualstudio.com/_apis/AzureSearch/GetfilesForListOfProducts?upn=&mkt=";
-
-            // 요청 본문에 productId 포함
-            var requestBody = new { productIds = new[] { productId } };
-            var jsonBody = JsonSerializer.Serialize(requestBody);
-            var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-
-            using (var client = new HttpClient())
+            try
             {
-                try
+                string apiUrl = "https://my.visualstudio.com/_apis/AzureSearch/GetfilesForListOfProducts?upn=&mkt=";
+                string jsonBody = $"[{productId}]";
+                var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync(apiUrl, content);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    var response = await client.PostAsync(apiUrl, content);
+                    string responseData = await response.Content.ReadAsStringAsync();
+                    var parsedResponse = JsonSerializer.Deserialize<FilesForProductsResponse>(responseData);
 
-                    if (response.IsSuccessStatusCode)
+                    listBox2.Items.Clear();
+
+                    if (parsedResponse?.filesForProducts != null &&
+                        parsedResponse.filesForProducts.TryGetValue(productId.ToString(), out var productFiles) &&
+                        productFiles?.fileDetailModels != null)
                     {
-                        string responseData = await response.Content.ReadAsStringAsync();
-                        // 파일 이름들 파싱
-                        var fileNames = JsonSerializer.Deserialize<List<string>>(responseData);
-
-                        // listBox2에 기존 항목 제거
-                        listBox2.Items.Clear();
-
-                        // 파일 이름을 listBox2에 추가
-                        foreach (var fileName in fileNames)
+                        foreach (var fileDetail in productFiles.fileDetailModels)
                         {
-                            listBox2.Items.Add(fileName);
+                            listBox2.Items.Add(fileDetail.fileName);
                         }
                     }
                     else
                     {
-                        MessageBox.Show($"요청 실패: {response.StatusCode}");
+                        MessageBox.Show("해당 ProductId에 파일 정보가 없습니다.");
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    MessageBox.Show($"오류 발생: {ex.Message}");
+                    MessageBox.Show($"요청 실패: {response.StatusCode}");
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"파일 가져오기 중 오류 발생: {ex.Message}");
             }
         }
 
+        private async void listView1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (listView1.SelectedItems.Count != 0)
+            {
+                var selectedItem = listView1.SelectedItems[0];
 
+                if (int.TryParse(selectedItem.Text, out int productId))
+                {
+                    await GetFilesForProductId(productId);
+                }
+                else
+                {
+                    MessageBox.Show("올바른 Product ID가 아닙니다.");
+                }
+            }
+        }
     }
 }

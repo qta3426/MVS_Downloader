@@ -58,7 +58,6 @@ namespace WindowsFormsApp5
             this.button2.TabIndex = 1;
             this.button2.Text = "다운로드";
             this.button2.UseVisualStyleBackColor = true;
-            //this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button3
             // 
@@ -68,7 +67,7 @@ namespace WindowsFormsApp5
             this.button3.TabIndex = 4;
             this.button3.Text = "상세정보보기";
             this.button3.UseVisualStyleBackColor = true;
-            //this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // textBox1
             // 
@@ -115,6 +114,7 @@ namespace WindowsFormsApp5
             this.listView1.Size = new System.Drawing.Size(591, 329);
             this.listView1.TabIndex = 10;
             this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listView1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseClick);
             // 
             // Form1
             // 

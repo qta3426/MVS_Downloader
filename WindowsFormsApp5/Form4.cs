@@ -13,15 +13,21 @@ namespace WindowsFormsApp5
 {
     public partial class Form4 : Form
     {
-        public Form4(string filename)
+        private FileDetailModel _fileDetail;
+        public Form4(FileDetailModel fileDetail)
         {
             InitializeComponent();
-            fileinfo result = fileinfo.Searchfileinfo(filename);
-            label6.Text = result.category;
-            label7.Text = result.Pname;
-            label8.Text = result.Fname;
-            label9.Text = result.lang;
-            label10.Text = result.sha1;
+            _fileDetail = fileDetail;
+        }
+        private void Form4_Load(object sender, EventArgs e)
+        {
+            // 파일의 상세 정보를 폼에 표시
+            label6.Text = _fileDetail.fileName;
+            label7.Text = _fileDetail.fileDescription;
+            label8.Text = _fileDetail.languageName;
+            label9.Text = _fileDetail.releaseDate.ToString("yyyy-MM-dd");
+            label10.Text = _fileDetail.sha256 ?? "정보 없음";
         }
     }
+
 }

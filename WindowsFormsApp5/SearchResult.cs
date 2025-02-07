@@ -22,4 +22,30 @@ namespace WindowsFormsApp5
     {
         public List<Product> searchResultsGroupByProduct { get; set; }
     }
+    public class FileDetailModel
+    {
+        public int? Id { get; set; }
+        public int productId { get; set; }
+        public int fileId { get; set; }
+        public string fileName { get; set; }
+        public string fileDescription { get; set; }
+        public string sha256 { get; set; }
+        public string fileType { get; set; }
+        public string architecture { get; set; }
+        public string languageCode { get; set; }
+        public string languageName { get; set; }
+        public DateTime releaseDate { get; set; }
+        public string note { get; set; }
+        public string bootstrapperDownloadLink { get; set; }
+    }
+    public class ProductFiles
+    {
+        public int productId { get; set; }
+        public List<FileDetailModel> fileDetailModels { get; set; }
+    }
+
+    public class FilesForProductsResponse
+    {
+        public Dictionary<string, ProductFiles> filesForProducts { get; set; }
+    }
 }
