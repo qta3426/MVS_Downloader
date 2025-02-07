@@ -31,11 +31,12 @@ namespace WindowsFormsApp5
         {
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.listBox1 = new System.Windows.Forms.ListBox();
             this.button3 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button5 = new System.Windows.Forms.Button();
             this.webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
+            this.listBox2 = new System.Windows.Forms.ListBox();
+            this.listView1 = new System.Windows.Forms.ListView();
             ((System.ComponentModel.ISupportInitialize)(this.webView21)).BeginInit();
             this.SuspendLayout();
             // 
@@ -57,16 +58,7 @@ namespace WindowsFormsApp5
             this.button2.TabIndex = 1;
             this.button2.Text = "다운로드";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // listBox1
-            // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 12;
-            this.listBox1.Location = new System.Drawing.Point(12, 52);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(591, 52);
-            this.listBox1.TabIndex = 2;
+            //this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button3
             // 
@@ -76,7 +68,7 @@ namespace WindowsFormsApp5
             this.button3.TabIndex = 4;
             this.button3.Text = "상세정보보기";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            //this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // textBox1
             // 
@@ -100,23 +92,42 @@ namespace WindowsFormsApp5
             this.webView21.AllowExternalDrop = true;
             this.webView21.CreationProperties = null;
             this.webView21.DefaultBackgroundColor = System.Drawing.Color.White;
-            this.webView21.Location = new System.Drawing.Point(12, 110);
+            this.webView21.Location = new System.Drawing.Point(645, 287);
             this.webView21.Name = "webView21";
             this.webView21.Size = new System.Drawing.Size(591, 258);
             this.webView21.TabIndex = 8;
             this.webView21.ZoomFactor = 1D;
+            // 
+            // listBox2
+            // 
+            this.listBox2.FormattingEnabled = true;
+            this.listBox2.ItemHeight = 12;
+            this.listBox2.Location = new System.Drawing.Point(12, 374);
+            this.listBox2.Name = "listBox2";
+            this.listBox2.Size = new System.Drawing.Size(591, 160);
+            this.listBox2.TabIndex = 9;
+            // 
+            // listView1
+            // 
+            this.listView1.HideSelection = false;
+            this.listView1.Location = new System.Drawing.Point(12, 39);
+            this.listView1.Name = "listView1";
+            this.listView1.Size = new System.Drawing.Size(591, 329);
+            this.listView1.TabIndex = 10;
+            this.listView1.UseCompatibleStateImageBehavior = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(735, 380);
+            this.ClientSize = new System.Drawing.Size(735, 550);
+            this.Controls.Add(this.listView1);
+            this.Controls.Add(this.listBox2);
             this.Controls.Add(this.webView21);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button3);
-            this.Controls.Add(this.listBox1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.MaximizeBox = false;
@@ -133,11 +144,12 @@ namespace WindowsFormsApp5
         #endregion
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button button5;
         private Microsoft.Web.WebView2.WinForms.WebView2 webView21;
+        private System.Windows.Forms.ListBox listBox2;
+        private System.Windows.Forms.ListView listView1;
     }
 }
 
