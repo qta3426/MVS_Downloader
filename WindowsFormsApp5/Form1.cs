@@ -76,20 +76,20 @@ namespace WindowsFormsApp5
             }
             this.FormClosed += Form1_Closing;
         }
-        //private void button2_Click(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        string filename = listBox1.SelectedItem.ToString();
-        //        string downloadlink = "https://my.visualstudio.com/_apis/Download/GetLink?friendlyFileName=" + listBox1.SelectedItem + "&&upn=&&productId=2168";
-        //        Form2 outForm = new Form2(downloadlink, ppath, filename);
-        //        outForm.Show();
-        //    }
-        //    catch (NullReferenceException)
-        //    {
-        //        MessageBox.Show("파일을 선택해주세요.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //    }
-        //}
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string filename = listBox2.SelectedItem.ToString();
+                string downloadlink = "https://my.visualstudio.com/_apis/Download/GetLink?friendlyFileName=" + listBox2.SelectedItem + "&&upn=&&productId=2168";
+                Form2 outForm = new Form2(downloadlink, ppath, filename);
+                outForm.Show();
+            }
+            catch (NullReferenceException)
+            {
+                MessageBox.Show("파일을 선택해주세요.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
         private void button3_Click(object sender, EventArgs e)
         {
         }
